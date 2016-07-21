@@ -66,8 +66,6 @@ app.post('/todos',function(req,res){
 
 		body.id = todoNextId++;
 		todos.push(body);
-		console.log('description' + body.description);
-
 		res.json(body);
 
 });
