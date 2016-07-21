@@ -1,21 +1,11 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [{
+var todos = [];
+var todoNextId = 1;
 
-	id: 1,
-	description: 'Meet mom for lunch',
-	completed: false,
-
-},{
-	id: 2,
-	description:'Go to market',
-	completed: false
-},{
-	id:3,
-	description:'Need to play Badminton',
-	completed: true
-}];
+app.use(bodyParser.json());
 
 app.get('/',function(req,res){
 	res.send('Todo API root');
@@ -68,7 +58,17 @@ app.get('/todos/:id',function(req,res){
 });
 
 
+//POST /todos
 
+app.post('/todos',function(req,res){
+
+		var body = req.body;
+
+		console.log('description' + body.description);
+
+		res.json(body);
+
+});
 
 
 	
