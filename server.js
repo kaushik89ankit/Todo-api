@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todos = [];
@@ -24,24 +25,8 @@ app.get('/todos',function(req,res){
 //GET /todos/:id
 app.get('/todos/:id',function(req,res){
 	var todoId = parseInt(req.params.id,10);
-	//res.send('Asking for todo with id of ' + req.params.id);
-
-	var matchedTodo;
-
-	console.log("Length of array stored is : " + todos.length);
-	console.log('user searched for id =  ' + todoId );
-
-	for (var i = todos.length - 1; i >= 0; i--) {
-		
-		console.log(todos[i].id);
-		console.log('Type of array elemnt is ' + typeof(todos[i].id));
-		console.log('Type of var matchedTodo is ' + typeof(matchedTodo));
-		if (todos[i].id === todoId) {
-			matchedTodo = todos[i];
-			console.log('Matched object ' + matchedTodo);
-		}
-	}
-
+	var matchedTodo = _.findWhere(todos,{id:todoId});
+	
 
 
 	if (matchedTodo) {
@@ -62,8 +47,14 @@ app.get('/todos/:id',function(req,res){
 
 app.post('/todos',function(req,res){
 
-		var body = req.body;
+		var body = _.pick(req.body,'description','completed');
 
+		if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length ===0) {
+
+			return res.status(400).send();
+		}
+
+		body.description = body.description.trim();
 		body.id = todoNextId++;
 		todos.push(body);
 		res.json(body);
