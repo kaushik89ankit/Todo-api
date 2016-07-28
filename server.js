@@ -45,15 +45,9 @@ app.get('/todos', function(req, res) {
 
 
 
-
-
-
-
-
 //GET /todos/:id
 app.get('/todos/:id', function(req, res) {
     var todoId = parseInt(req.params.id, 10);
-
     db.todo.findById(todoId).then(function(todo) {
         if (!!todo) {
             res.json(todo.toJSON());
@@ -72,15 +66,11 @@ app.get('/todos/:id', function(req, res) {
 //POST /todos
 
 app.post('/todos', function(req, res) {
-
     var body = _.pick(req.body, 'description', 'completed');
-
     db.todo.create(body).then(function(todo) {
-        res.json(todo.toJSON());
+        res.json(todo.toPublicJSON());
     }, function(e) {
-
         res.status(400).json(e);
-
     });
 
 });
@@ -143,9 +133,21 @@ app.put('/todos/:id', function(req, res) {
     	}).then(function(todo){
     		res.json(todo.toJSON());
     	},function(e){
-    		res.status(400).json(e);
+    		res.status(500).send();
     	});
     });
+
+app.post('/users',function(req,res){
+	var body = _.pick(req.body,'email','password');
+	db.user.create(body).then(function(user){
+		res.json(user.toPublicJSON());
+	},function(e){
+		res.status(400).json(e);
+	});
+});
+
+// POST /users/login
+
 
 db.sequelize.sync().then(function() {
     app.listen(PORT, function() {
