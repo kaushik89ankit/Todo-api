@@ -11,7 +11,7 @@ var todoNextId = 1;
 app.use(bodyParser.json());
 
 app.get('/', function(req, res) {
-	console.error(e);
+	
     res.send('Todo API root');
 });
 
