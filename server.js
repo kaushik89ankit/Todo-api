@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
+var bcrypt = require('bcrypt');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todos = [];
@@ -148,8 +149,19 @@ app.post('/users',function(req,res){
 
 // POST /users/login
 
+app.post('/users/login',function(req,res){
+	var body = _.pick(req.body,'email','password');
+   	db.user.authenticate(body).then(function(user){
+   		res.json(user.toPublicJSON());
+   	},function(e){
+   		console.error(e);
+   		res.status(400).send();
+   	});
+});
 
-db.sequelize.sync().then(function() {
+
+
+db.sequelize.sync({force:true}).then(function() {
     app.listen(PORT, function() {
         console.log('Express listening on ' + PORT + '!');
     });
