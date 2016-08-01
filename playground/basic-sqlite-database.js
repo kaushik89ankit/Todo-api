@@ -12,8 +12,8 @@ var Todo = sequelize.define('todo', {
 
         type: Sequelize.STRING,
         allowNull: false,
-        validate:{
-        	len:[1,250]
+        validate: {
+            len: [1, 250]
         }
     },
 
@@ -21,38 +21,42 @@ var Todo = sequelize.define('todo', {
 
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue:false
+        defaultValue: false
     }
 
 });
 
+var User = sequelize.define('user', {
+    email :{
+        type:Sequelize.STRING
+    }
+});
+
+Todo.belongsTo(User);
+User.hasMany(Todo);
+
+
 sequelize.sync({ force: true }).then(function() {
     console.log('Everything is synced');
 
-    Todo.create({
-	
-		description: 'Take the trash out',
-		completed:false    	
-
-    }).then(function(todo) {
-    	return Todo.create({
-    		description:'clean office'
-    	});
-    }).then(function(){
-
-    	return Todo.findById(1)
-
-    }).then(function(todo){
-
-    	if(todo){
-    		console.log(todo.toJSON());
-    	}else{
-    		console.log('no to do found');
-    	}
-    		
-
-    }).catch(function(e){
-    	console.log(e);
+    User.findById(1).then(function(user){
+        user.getTodos().then(function(todos){
+            todos.forEach(function(todo){
+                console.log(todo.toJSON());
+            });
+        });
     });
+    // User.create({
 
+    //     email: 'andrew@example.com'
+    // }).then(function(){
+    //     return Todo.create({
+    //         description: 'Clean yard'
+    //        }); 
+    // }).then(function(todo){
+    //     User.findById(1).then(function(user){
+
+    //         user.addTodo(todo);
+    //     });
+    // })
 });
